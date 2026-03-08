@@ -1386,6 +1386,20 @@
             return formatWaktu;
         }
 
+        // FUNGSI HELPER BARU: Mengubah teks dengan baris baru (Enter) menjadi Bullet Points
+        function formatToBullets(text) {
+            if (!text || text === '-') return '-';
+            // Pecah teks berdasarkan tombol Enter
+            const lines = String(text).split('\n').filter(line => line.trim() !== '');
+            
+            // Jika barisnya lebih dari 1 (Ada Enter), jadikan Bullet Point
+            if (lines.length > 1) {
+                return `<ul class="list-disc pl-4 mt-1 mb-1 space-y-0.5">` + lines.map(line => `<li>${line.trim()}</li>`).join('') + `</ul>`;
+            }
+            // Jika tidak ada Enter, kembalikan teks biasa
+            return String(text).trim();
+        }
+        
         // ==========================================
         // VARIABEL GLOBAL PAGINASI
         // ==========================================
@@ -1519,7 +1533,7 @@
                     return formatted ? `<div class="text-[10px] text-gray-400 italic mt-0.5">${formatted}</div>` : '';
                 };
                 
-                const formatCatatan = (cat) => cat && cat !== '-' ? `<div class="text-[11px] text-gray-500 mt-0.5 whitespace-normal min-w-[120px]">${cat}</div>` : '';
+                const formatCatatan = (cat) => cat && cat !== '-' ? `<div class="text-[11px] text-gray-500 mt-0.5 whitespace-normal min-w-[120px]">${formatToBullets(cat)}</div>` : '';
 
                 let actionHtml = '';
                 
@@ -1601,14 +1615,14 @@
                     
                     <td class="${tdClass} text-left">
                         ${labelMobile('Tanggapan Pengusul')}
-                        ${row.tanggapanPengusul && row.tanggapanPengusul !== '-' ? `<div class="text-[11px] text-gray-600 whitespace-normal p-2 bg-gray-50 rounded border border-gray-200 italic">"${row.tanggapanPengusul}"</div>` : '<span class="text-gray-400 text-xs">-</span>'}
+                        ${row.tanggapanPengusul && row.tanggapanPengusul !== '-' ? `<div class="text-[11px] text-gray-600 whitespace-normal p-2 bg-gray-50 rounded border border-gray-200 italic">${formatToBullets(row.tanggapanPengusul)}</div>` : '<span class="text-gray-400 text-xs">-</span>'}
                         ${formatTgl(row.tglUpdatePengusul)}
                     </td>
                     
                     ${userRole === 'Verifikator' ? `
                     <td class="${tdClass} text-left bg-yellow-50/50 md:border-l md:border-yellow-200">
                         ${labelMobile('Catatan Internal (Rahasia)')}
-                        <div class="text-[11px] text-yellow-800 whitespace-normal font-medium">${row.catatanInternal || '-'}</div>
+                        <div class="text-[11px] text-yellow-800 whitespace-normal font-medium">${row.catatanInternal && row.catatanInternal !== '-' ? formatToBullets(row.catatanInternal) : '-'}</div>
                     </td>` : ''}
                     
                     <td class="${tdClass} text-center md:sticky right-0 md:bg-white md:shadow-[-5px_0_10px_-5px_rgba(0,0,0,0.05)] align-middle md:rounded-r-xl bg-gray-50/50 md:bg-transparent rounded-b-xl md:rounded-b-none mt-2 md:mt-0 py-3">
@@ -1959,7 +1973,7 @@
                                             </div>
                                             <div class="ml-2 mt-2 flex flex-col gap-1">
                                                 <span class="inline-block self-start px-2.5 py-1 text-xs font-bold rounded ${getBadgeColor(usul.statusPengelola)}">${getStatusIcon(usul.statusPengelola)} ${usul.statusPengelola}</span>
-                                                ${usul.catatanPengelola && usul.catatanPengelola !== '-' ? `<p class="text-xs text-gray-600 mt-1 bg-white p-2 rounded border border-gray-100 italic">" ${usul.catatanPengelola} "</p>` : ''}
+                                                ${usul.catatanPengelola && usul.catatanPengelola !== '-' ? `<div class="text-xs text-gray-600 mt-1 bg-white p-2 rounded border border-gray-100 italic">${formatToBullets(usul.catatanPengelola)}</div>` : ''}
                                             </div>
                                         </div>
 
@@ -1971,7 +1985,7 @@
                                             </div>
                                             <div class="ml-2 mt-2 flex flex-col gap-1">
                                                 <span class="inline-block self-start px-2.5 py-1 text-xs font-bold rounded ${getBadgeColor(usul.statusVerifikator)}">${getStatusIcon(usul.statusVerifikator)} ${usul.statusVerifikator}</span>
-                                                ${usul.catatanVerifikator && usul.catatanVerifikator !== '-' ? `<p class="text-xs text-gray-600 mt-1 bg-white p-2 rounded border border-gray-100 italic">" ${usul.catatanVerifikator} "</p>` : ''}
+                                                ${usul.catatanVerifikator && usul.catatanVerifikator !== '-' ? `<div class="text-xs text-gray-600 mt-1 bg-white p-2 rounded border border-gray-100 italic">${formatToBullets(usul.catatanVerifikator)}</div>` : ''}
                                             </div>
                                         </div>
 
@@ -1982,7 +1996,7 @@
                                                 <span class="text-xs font-bold text-green-800 uppercase">Tanggapanku</span>
                                                 <span class="text-[10px] text-gray-400">${formatTanggalWITA(usul.tglUpdatePengusul)}</span>
                                             </div>
-                                            <p class="ml-2 text-xs text-gray-700 bg-white p-2 rounded border border-gray-100">" ${usul.tanggapanPengusul} "</p>
+                                            <div class="ml-2 text-xs text-gray-700 bg-white p-2 rounded border border-gray-100 italic">${formatToBullets(usul.tanggapanPengusul)}</div>
                                         </div>` : ''}
 
                                     </div>
@@ -3061,5 +3075,4 @@
 </body>
 
 </html>
-
 
